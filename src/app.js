@@ -10,9 +10,13 @@ app.use(cors({
     origin:process.env.CORS_ORIGIN
 }))
 
-// importing routes
+// importing routers
+import authRouter from "./routes/auth.routes.js"
+
 
 
 // declaring routes
+app.use("/api/v1/auth", authRouter)
+
 
 export { app };
