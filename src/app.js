@@ -12,11 +12,10 @@ app.use(cors({
 
 // importing routers
 import authRouter from "./routes/auth.routes.js"
-
-
+import bookRouter from "./routes/books.routes.js"
 
 // declaring routes
 app.use("/api/v1/auth", authRouter)
-
+app.use("/api/v1/books", bookRouter)
 
 export { app };

@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken'
 import { ApiError } from '../utils/ApiError.js'
 
 const verifyToken = (req, _, next) => {
+
   const token = req.cookies.accessToken
   if (!token)
     throw new ApiError(401, 'Invalid token or token not found in cookies')
@@ -9,6 +10,9 @@ const verifyToken = (req, _, next) => {
   const verify = jwt.verify(token, process.env.JWT_SECRET)
   if (!verify)
     throw new ApiError(401, 'Invalid token or token not found in cookies')
+
+  console.log(verify);
+  
 
   req.user = verify
   next()

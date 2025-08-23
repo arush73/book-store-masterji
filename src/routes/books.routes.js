@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { verifyToken } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
@@ -8,10 +9,10 @@ import {
   getBookDetails,
   updateBook,
   deleteBook,
-} from "../controllers/books.controller.js";
+} from "../controllers/books.controllers.js";
 
-router.route("/books").post(addBook).get(getAllBooks)// admin only for post public for get
-router.route("/books/:id").get(getBookDetails).put(updateBook).delete(deleteBook) // public for get admin only for put and delete
+router.route("/").post(verifyToken, addBook).get(verifyToken, getAllBooks)// admin only for post public for get
+router.route("/:id").get(verifyToken,getBookDetails).put(verifyToken,updateBook).delete(verifyToken,deleteBook) // public for get admin only for put and delete
 
 
 export default router;

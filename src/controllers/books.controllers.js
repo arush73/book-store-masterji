@@ -4,13 +4,18 @@ import { ApiError } from '../utils/ApiError.js'
 import { ApiResponse } from '../utils/ApiResponse.js'
 
 const addBook = asyncHandler(async (req, res) => {
-  const { title } = req.body
+  const { title, price, stock } = req.body
 
-  if (!title) throw new ApiError(400, 'provide the book title in the body')
+  if (!title || !price || !stock)
+    throw new ApiError(400, 'provide the book title in the body')
+
+  console.log(req.user.id)
 
   const createDatabase = await Book.create({
     title: title,
-    addedBy: req.user._id,
+    price: price,
+    stock: stock,
+    addedBy: req.user.id,
   })
   if (!createDatabase)
     throw new ApiError(500, 'Failed to add book to the database')
@@ -21,7 +26,7 @@ const addBook = asyncHandler(async (req, res) => {
 })
 
 const getAllBooks = asyncHandler(async (req, res) => {
-  const books = await Book.find({ addedBy: req.user._id }).sort({
+  const books = await Book.find({ addedBy: req.user.id }).sort({
     createdAt: -1,
   })
 
@@ -38,7 +43,7 @@ const getBookDetails = asyncHandler(async (req, res) => {
 
   if (!bookId) throw new ApiError(400, 'Book ID is required')
 
-  const book = await Book.findOne({ _id: bookId, addedBy: req.user._id })
+  const book = await Book.findOne({ _id: bookId})
 
   if (!book) throw new ApiError(404, 'Book not found')
 
@@ -54,8 +59,8 @@ const updateBook = asyncHandler(async (req, res) => {
   if (!bookId) throw new ApiError(400, 'Book ID is required')
   if (!title) throw new ApiError(400, 'Book title is required')
 
-  const updatedBook = await Book.findOneAndUpdate(
-    { _id: bookId, addedBy: req.user._id },
+  const updatedBook = await Book.findByIdAndUpdate(
+  bookId ,
     { title: title },
     { new: true }
   )
@@ -74,7 +79,6 @@ const deleteBook = asyncHandler(async (req, res) => {
 
   const deletedBook = await Book.findOneAndDelete({
     _id: bookId,
-    addedBy: req.user._id,
   })
 
   if (!deletedBook) throw new ApiError(404, 'Book not found or not deleted')
@@ -83,7 +87,7 @@ const deleteBook = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, 'Book deleted successfully', deletedBook))
 })
 
-export default {
+export  {
   addBook,
   getAllBooks,
   getBookDetails,
